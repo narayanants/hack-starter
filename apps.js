@@ -16,3 +16,18 @@ const errorHandler =  require('errorhandler');
 const chalk = require('chalk');
 const lusca = require('lusca');
 const sass = require('node-sass-middleware');
+const dotenv = require('dotenv');
+const MongoStore = require('connect-mongo')(session);
+
+const upload = multer({dest:path.join(__dirname,'uploads')});
+
+/* Load env file which contains API keys and pass */
+dotenv.load({path:'.env.example'});
+
+/* Controller for the app */
+
+const homeController =  require('./controllers/home');
+const apiController = require('./controllers/api');
+const contactController = require('./controllers/contact');
+const userController = require('./controllers/user');
+
