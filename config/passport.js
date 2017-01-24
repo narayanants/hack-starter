@@ -117,9 +117,7 @@ passport.use(new FacebookStrategy({
     });
   }
 }));
-/**
- * Sign in with GitHub.
- */
+/* Sign in with GitHub */
 passport.use(new GitHubStrategy({
   clientID: process.env.GITHUB_ID,
   clientSecret: process.env.GITHUB_SECRET,
