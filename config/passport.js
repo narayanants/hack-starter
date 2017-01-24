@@ -227,7 +227,7 @@ passport.use(new TwitterStrategy({
   }
 }));
 
-// Sign in using Google
+// Sign in using Google using Oauth
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_ID,
