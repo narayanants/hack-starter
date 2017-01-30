@@ -165,7 +165,7 @@ app.get('/auth/github',passport.authenticate('github'));
 app.get('/auth/github/callback',passport.authenticate('github',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
-app.get('/auth/google',passport.authenticate('google',{scope:'profile_email'}));
+app.get('/auth/google',passport.authenticate('google',{scope:'profile email'}));
 app.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
@@ -174,10 +174,6 @@ app.get('/auth/twitter/callback',passport.authenticate('twitter',{failureRedirec
     res.redirect(req.session.returnTo || '/');
 });
 app.get('/auth/linkedin',passport.authenticate('twitter'));
-app.get('/auth/linkedin/callback',passport.authenticate('linkedin',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect(req.session.returnTo || '/');
-});
-app.get('/auth/linkedin',passport.authenticate('linkedin',{state:'SOME STATE'}));
 app.get('/auth/linkedin/callback',passport.authenticate('linkedin',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
