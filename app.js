@@ -43,17 +43,17 @@ mongoose.Promise = global.Promise;
 mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 mongoose.connection.on('error', () => {
   console.log('%s MongoDB connection error. Please make sure MongoDB is running.', chalk.red('✗'));
-  process.exit();
+  process.exit(1);
 });
 
 /* Express Configuration */
+
 app.set('port',process.env.PORT || 3000);
 app.set('view engine','pug');
 app.set('views',path.join(__dirname,'views'));
 app.use(expressStatusMonitor());
 app.use(expressValidator());
 app.use(compression());
-app.use(helmet());
 app.use(sass({
     src:path.join(__dirname,'public'),
     dest:path.join(__dirname,'public')
@@ -65,7 +65,7 @@ app.use(session({
     resave:true,
     saveUninitialized:true,
     secret:process.env.SESSION_SECRET,
-    storage: new MongoStore({
+    store: new MongoStore({
         url:process.env.MONGODB_URI || process.env.MONGOLAB_URI,
         autoReconnect:true
     })
