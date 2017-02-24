@@ -200,9 +200,14 @@ app.get('/auth/pinterest/callback',passport.authorize('pinterest',{failureRedire
 /* Error handlers */
 app.use(errorHandler());
 
-/* Start Express server */
+/* Start Express Server */
    
+app.listen(app.get('port'),()=>{
+    console.log('%s App is running in http://localhost:%d in %s mode',chalk.green('✓'),app.get('port'),app.get('env'));
+    console.log('  Press CTRL-C to stop\n');'))
+});
 
+module.exports = app;
 
   
 
