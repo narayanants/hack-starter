@@ -64,6 +64,7 @@ passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_ID,
   clientSecret: process.env.FACEBOOK_SECRET,
   callbackURL: '/auth/facebook/callback',
+<<<<<<< HEAD
   profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
   passReqToCallback: true
 }, (req, accessToken, refreshToken, profile, done) => {
@@ -71,6 +72,15 @@ passport.use(new FacebookStrategy({
     User.findOne({ facebook: profile.id }, (err, existingUser) => {
       if (err) { return done(err); }
       if (existingUser) {
+=======
+  profileFields:['name','email','link','locale','timezone'],
+  passReqToCallback:true
+},(req,accessToken,refreshToken,profile,done)=>{
+  if(req.user){
+    User.findOne({facebook:profile.id},(err,existingUser)=>{
+      if(err){return done(err);}
+      if(!existingUser){
+>>>>>>> 700bdb2054ce1fb339e45f606c614cb9e2f4c8b0
         req.flash('errors', { msg: 'There is already a Facebook account that belongs to you. Sign in with that account or delete it, then link it with your current account.' });
         done(err);
       } else {
@@ -83,11 +93,12 @@ passport.use(new FacebookStrategy({
           user.profile.picture = user.profile.picture || `https://graph.facebook.com/${profile.id}/picture?type=large`;
           user.save((err) => {
             req.flash('info', { msg: 'Facebook account has been linked.' });
-            done(err, user);
+            done(err,user);
           });
         });
       }
     });
+<<<<<<< HEAD
   } else {
     User.findOne({ facebook: profile.id }, (err, existingUser) => {
       if (err) { return done(err); }
@@ -97,23 +108,43 @@ passport.use(new FacebookStrategy({
       User.findOne({ email: profile._json.email }, (err, existingEmailUser) => {
         if (err) { return done(err); }
         if (existingEmailUser) {
+=======
+  }else{
+    User.findOne({facebook:profile.id},(err,existingUser)=>{
+      if(err){return done(err);}
+      if(existingUser){
+        return done(null,existingUser);
+      }
+      user.findById(req.user.id,(err,existingEmailUser)=>{
+        if(err){return done(err);}
+        if(existingEmailUser){
+>>>>>>> 700bdb2054ce1fb339e45f606c614cb9e2f4c8b0
           req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with Facebook manually from Account Settings.' });
           done(err);
         } else {
           const user = new User();
-          user.email = profile._json.email;
           user.facebook = profile.id;
           user.tokens.push({ kind: 'facebook', accessToken });
           user.profile.name = `${profile.name.givenName} ${profile.name.familyName}`;
           user.profile.gender = profile._json.gender;
           user.profile.picture = `https://graph.facebook.com/${profile.id}/picture?type=large`;
+<<<<<<< HEAD
           user.profile.location = (profile._json.location) ? profile._json.location.name : '';
           user.save((err) => {
             done(err, user);
+=======
+          user.profile.location = (profile._json.location)? profile._json.location.name : '';
+          user.save((err)=>{
+            done(err,user);
+>>>>>>> 700bdb2054ce1fb339e45f606c614cb9e2f4c8b0
           });
         }
       });
     });
   }
+<<<<<<< HEAD
 }));
+=======
+}));  
+>>>>>>> 700bdb2054ce1fb339e45f606c614cb9e2f4c8b0
 
