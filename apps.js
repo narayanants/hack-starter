@@ -121,7 +121,32 @@ app.post('/account/password',passportConfig.isAuthenticated,userController.postU
 app.post('/account/delete',passportConfig.isAuthenticated,userController.postAccountDelete);
 app.get('/account/unlink/:provider',passportConfig.isAuthenticated,userController.getAccountUnlink);
 
-/* API examples routes */
+/* API examples routes 
+
+    home
+    lastfm
+    nyt
+    aviary
+    steam
+    stripe
+    scraping
+    twilio
+    clockwork
+    foursquare
+    tumblr
+    facebook
+    github
+    twitter
+    linkedin
+    pinterest
+    paypal
+    lob
+    upload
+    google-maps
+
+
+
+*/
 app.get('/api',apiController.getApi);
 app.get('/api/lastfm',apiController.getLastfm);
 app.get('/api/nyt',apiController.getNewYorkTimes);
@@ -152,73 +177,62 @@ app.get('/api/upload',apiController.getFileUpload);
 app.post('/api/upload',upload.single('myFile'),apiController.postFileUpload);
 app.get('/api/google-maps',apiController.getGoogleMaps);
 
-/* Oauth  Authentication routes (Sign in) */
+/**
+ * OAuth authentication routes. (Sign in)
+ */
+
 app.get('/auth/instagram',passport.authenticate('instagram'));
 app.get('/auth/instagram/callback',passport.authenticate('instagram',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect(req.session.returnTo || '/');
-}); 
-app.get('/auth/facebook',passport.authenticate('facebook',{scope:['email','public_profile']}));
-app.get('/auth/facebook/callback',passport.authenticate('facebook',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect(req.session.returnTo || '/');
+    res.redirect(req.session.returnTo || '/')
 });
+
 app.get('/auth/github',passport.authenticate('github'));
 app.get('/auth/github/callback',passport.authenticate('github',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect(req.session.returnTo || '/');
+    res.redirect(req.session.returnTo || '/')
 });
+
+app.get('/auth/twitter',passport.authenticate('twitter'));
+app.get('/auth/twitter/callback',passport.authenticate('twitter',{failureRedirect:'/login'}),(req,res)=>{
+    res.redirect(req.session.returnTo || '/')
+});
+
 app.get('/auth/google',passport.authenticate('google',{scope:'profile email'}));
 app.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
-app.get('/auth/twitter',passport.authenticate('twitter'));
-app.get('/auth/twitter/callback',passport.authenticate('twitter',{failureRedirect:'/login'}),(req,res)=>{
+
+app.get('/auth/facebook',passport.authenticate('facebook',{scope:['email','public_profile']}));
+app.get('/auth/facebook/callback',passport.authenticate('facebook',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
-app.get('/auth/linkedin',passport.authenticate('twitter'));
+
+app.get('/auth/linkedin',passport.authenticate('linkedin',{ state: 'SOME STATE' }));
 app.get('/auth/linkedin/callback',passport.authenticate('linkedin',{failureRedirect:'/login'}),(req,res)=>{
     res.redirect(req.session.returnTo || '/');
 });
 
-/* Oauth authorization routes (API examples) */
+
+/**
+ * OAuth authorization routes. (API examples)
+ */
 
 app.get('/auth/foursquare',passport.authorize('foursquare'));
 app.get('/auth/foursquare/callback',passport.authorize('foursquare',{failureRedirect:'/api'}),(req,res)=>{
     res.redirect('/api/foursquare');
 });
+
 app.get('/auth/tumblr',passport.authorize('tumblr'));
 app.get('/auth/tumblr/callback',passport.authorize('tumblr',{failureRedirect:'/api'}),(req,res)=>{
     res.redirect('/api/tumblr');
 });
+
 app.get('/auth/steam',passport.authorize('openid',{state:'SOME STATE'}));
-app.get('/auth/steam/callback',passport.authorize('steam',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect(req.session.returnTo || '/');
+app.get('/auth/steam/callback',passport.authorize('openid',{failureRedirect:'/login'}),(req,res)=>{
+    res.redirect(/req/session.returnTo || '/');
 });
-app.get('/auth/pinterest',passport.authorize('pinterest',{scope:'read_public write_public'}));
+
+app.get('/auth/pinterest',passport.authorize('pinterest',{scope:['read_profile','write_profile']}));
 app.get('/auth/pinterest/callback',passport.authorize('pinterest',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect('/api/pinterest');
+    res.redirect('/api/tumblr');
 });
-
-/* Error handlers */
-app.use(errorHandler());
-
-/* Start Express Server */
-   
-app.listen(app.get('port'),()=>{
-    console.log('%s App is running in http://localhost:%d in %s mode',chalk.green('✓'),app.get('port'),app.get('env'));
-    console.log('  Press CTRL-C to stop\n');'))
-});
-
-module.exports = app;
-
-  
-
-
-
-
-
-
-
-
-
-
-
 
