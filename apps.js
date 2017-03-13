@@ -233,6 +233,17 @@ app.get('/auth/steam/callback',passport.authorize('openid',{failureRedirect:'/lo
 
 app.get('/auth/pinterest',passport.authorize('pinterest',{scope:['read_profile','write_profile']}));
 app.get('/auth/pinterest/callback',passport.authorize('pinterest',{failureRedirect:'/login'}),(req,res)=>{
-    res.redirect('/api/tumblr');
+    res.redirect('/api/pinterest');
 });
 
+/* Error handler */
+app.use(errorHandler());
+
+/* Start Express server */
+
+app.listen(app.get('port'),()=>{
+    console.log('%s App is running at http://localhost:%d in %s mode', chalk.green('✓'), app.get('port'), app.get('env'));
+    console.log('  Press CTRL-C to stop\n');
+});
+
+module.exports = app;
