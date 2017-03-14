@@ -373,6 +373,20 @@ passport.use(new InstagramStrategy({
       }
     });
   }else{
-    User.findOne({instagram:})
+    User.findOne({instagram:profile.id},(err,existingUser)=>{
+      if(err){return done(err);}
+      if(existingUser){
+        return done(null,existingUser);
+      }else{
+        const user = new User();
+        user.instagram = profile.id;
+        user.profile.name =  profile.displayName;
+        user.profile.picture = profile._json.data.profile_picture;
+        user.profile.website = profile._json.data.website;
+        user.save((err)=>{
+          done(err,user);
+        });
+      }
+    });
   }
 }));
