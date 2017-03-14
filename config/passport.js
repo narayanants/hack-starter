@@ -380,6 +380,8 @@ passport.use(new InstagramStrategy({
       }else{
         const user = new User();
         user.instagram = profile.id;
+        user.tokens.push({kind:'instagram',accessToken});
+        user.email = `${profile.username}@instagram.com`;
         user.profile.name =  profile.displayName;
         user.profile.picture = profile._json.data.profile_picture;
         user.profile.website = profile._json.data.website;
