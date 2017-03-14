@@ -321,6 +321,24 @@ passport.use(new LinkedInStrategy({
         if(existingUser){
           return done(null,existingUser);
         }
+        User.findOne({email:profile._json.email},(err,existingEmailUser)=>{
+          if(err){return done(err);}
+          if(existingEmailUser){
+            req.flash('errors', { msg: 'There is already an account using this email address. Sign in to that account and link it with LinkedIn manually from Account Settings.' });
+			      done(err);
+          }else{
+            const user = new User();
+            user.linkedin = profile.id;
+            user.tokens.push({kind:'linkedin',accessToken});
+            user.profile.name = profile.displayName;
+            user.profile.location = profile._json.location.name;
+            user.profile.website = profile._json.publicProfileurl;
+            user.profile.picture = profile._json.pictureUrl;
+            user.save((err)=>{
+              done(err,user);
+            });
+          }
+        }); 
       });
     }
 }));
