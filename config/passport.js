@@ -487,3 +487,17 @@ passport.use('pinterest',new OAuth2Strategy({
     });
   });
 }));
+
+/* Login Required Middleware */
+
+exports.isAuthenticated = (req,res,next)=>{
+  if(req.isAuthenticated()){
+    return next();
+  }
+  res.redirect('/login');
+}
+
+
+
+
+
