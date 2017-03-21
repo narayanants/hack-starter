@@ -109,3 +109,24 @@ exports.postSignup = (req,res,next)=>{
         });
     });
 };
+
+
+/**
+ * GET /profile
+ * Profile Page
+ */
+
+exports.getAccount = (req,res)=>{
+    res.render('account/profile',{
+        title: 'Account Management'
+    }); 
+};
+
+/**
+ * POST account/profile
+ * Update profile info
+ */
+
+
+
+
