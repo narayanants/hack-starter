@@ -1,8 +1,8 @@
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
-const mongoose = require('mognoose');
+const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.model({
     email: {type:String, unique: true},
     password: String,
     passwordResetToken: String,
@@ -14,14 +14,12 @@ const userSchema = new mongoose.Schema({
     linkedin: String,
     instagram: String,
     twitter: String,
-    steam: String,
-    tokens: Array,
 
     profile:{
-        name: String,
+        name:String,
         gender: String,
+        profile: String,
         picture: String,
-        location: String,
         website: String
     }
 },{timestamps:true});
@@ -39,14 +37,14 @@ userSchema.pre('save',function save(next){
             next();
         });
     });
-});
+}); 
 
 /**
- * Helper methods for validating user's password
+ * Helper method for validating user's password
  */
 
 userSchema.methods.comparePassword = function comparePassword(candidatePassword,cb){
-    bcrypt.compare(user.password,this.password,(err,isMatch)=>{
+    bcrypt.compare(candidatePassword,this.password,(err,isMatch)=>{
         cb(err,isMatch);
     });
 };
@@ -54,17 +52,19 @@ userSchema.methods.comparePassword = function comparePassword(candidatePassword,
 /**
  * Helper method for getting user's gravatar.
  */
-userSchema.methods.gravatar = function gravatar(size) {
-  if (!size) {
-    size = 200;
-  }
-  if (!this.email) {
-    return `https://gravatar.com/avatar/?s=${size}&d=retro`;
-  }
-  const md5 = crypto.createHash('md5').update(this.email).digest('hex');
-  return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
+
+userSchema.methods.gravatar = function gravatar(size){
+    if(!size){
+        size = 200;
+    }
+    if(!this.email){
+        return `https://gravatar.com/avatar/?s=${size}&r=retro`;
+    }
+
+    const md5 = crypto.createHash('md5').update(this.email).digest('hex');
+    return `https://gravatar.com/avatar/${md5}?s=${size}&r=retro`;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User',userSchema);
 
 module.exports = User;
