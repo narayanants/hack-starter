@@ -79,10 +79,10 @@ exports.getSignup = (req,res)=>{
  */
 
 exports.postSignup = (req,res,next)=>{
-    req.assert('email','Email is not valid').isEmail();
-    req.assert('password','Password must be 4 characters long').len(4);
+    req.assert('email','Please enter a valid email address').isEmail();
+    req.assert('password','Password should be 4 characters long').len(4);
     req.assert('confirmPassword','Passwords do not match').equals(req.body.password);
-
+    
     const errors = req.validationErrors();
     if(errors){
         req.flash('errors',errors);
@@ -94,7 +94,6 @@ exports.postSignup = (req,res,next)=>{
         password: req.body.password
     });
 
-    /* If email exists */
     User.findOne({email:req.body.email},(err,existingUser)=>{
         if(err){return next(err);}
         if(existingUser){
@@ -128,7 +127,7 @@ exports.getAccount = (req,res)=>{
  */
 
 exports.postUpdateProfile = (req,res,next)=>{
-    req.assert('email','Please enter a valid email address').isEmail();
+    req.assert('email','Email is not valid').isEmail();
     req.sanitize('email').normalizeEmail({remove_dots:false});
 
     const errors = req.validationErrors();
@@ -136,10 +135,11 @@ exports.postUpdateProfile = (req,res,next)=>{
         req.flash('errors',errors);
         return res.redirect('/account');
     }
-    User.findById(req.body.id,(err,user)=>{
+
+    User.findById(req.user.id,(err,user)=>{
         if(err){return next(err);}
         user.email = req.body.email || '';
-        user.profile.name = req.body.name || '';
+        user.profile.name = req.body.email || '';
         user.profile.gender = req.body.gender || '';
         user.profile.location = req.body.location || '';
         user.profile.website = req.body.website || '';
@@ -151,11 +151,39 @@ exports.postUpdateProfile = (req,res,next)=>{
                 }
                 return next(err);
             }
-           req.flash('success', { msg: 'Profile information has been updated.' });
-           res.redirect('/account');
+            req.flash('success',{msg:'Profile information updated successfully!'});
+            res.redirect('/account');
+        });
+    });     
+};
+
+/**
+ * POST /account/password
+ * Update current password
+ */
+
+exports.postAccountPassword = (req,res,next)=>{
+    req.assert('password','Password must be 4 characters long').len(4);
+    req.assert('confirmPassword','Password do not match').equals(req.body.password);
+
+    const errors = req.validationErrors();
+    if(errors){
+        req.flash('errors',errors);
+        return res.redirect('/account');
+    }
+
+    User.findById(req.user.id,(err,user)=>{
+        if(err){return next(err);}
+        user.password = req.body.password;
+        user.save((err)=>{
+            req.flash('success', { msg: 'Password has been changed.' });
+            res.redirect('/account');
         });
     });
 };
+
+
+
 
 
 
