@@ -8,17 +8,15 @@ const User = require('../models/User');
 
 /**
  * GET /login
- * Login Page.
+ * Login page.
  */
 
 exports.getLogin = (req,res)=>{
-    if(req.user){
-        return res.redirect('/');
-    }
     res.render('login',{
-        title: 'Login'
+        title:'Login'
     });
 };
+
 
 /**
  * POST /login
@@ -27,8 +25,8 @@ exports.getLogin = (req,res)=>{
 
 exports.postLogin = (req,res,next)=>{
     req.assert('email','Email is not valid').isEmail();
-    req.assert('name','Name cannot be blank').notEmpty();
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    req.assert('password','Password cannot be empty').notEmpty();
+    req.sanitize('email').normalizeEmail({remove_dots:false});
 
     const errors = req.validationErrors();
     if(errors){
@@ -36,7 +34,7 @@ exports.postLogin = (req,res,next)=>{
         return res.redirect('/login');
     }
 
-    passport.authenticate('login',(err,user,info)=>{
+    passport.authenticate('local',(err,user,info)=>{
         if(err){return next(err);}
         if(!user){
             req.flash('errors',info);
@@ -44,24 +42,26 @@ exports.postLogin = (req,res,next)=>{
         }
         req.logIn(user,(err)=>{
             if(err){return next(err);}
-            req.flash('success', { msg: 'Success! You are logged in.' });
+            req.flash('success',{msg:'Success! You are currently logged in'});
             res.redirect(req.session.returnTo || '/');
         });
     })(req,res,next);
-};
+};  
 
 /**
- * GET /logout
- * Log out.
+ * GET logout
+ * log out.
  */
-exports.logout = (req,res)=>{
-    req.logout();
-    res.redirect('/');
+
+exports.getLogout = (req,res)=>{
+    res.render('logout',{
+        title: 'Logout'
+    });
 };
 
 /**
  * GET /signup
- * Signup page
+ * Sign up page
  */
 
 exports.getSignup = (req,res)=>{
@@ -81,19 +81,20 @@ exports.getSignup = (req,res)=>{
 exports.postSignup = (req,res,next)=>{
     req.assert('email','Email is not valid').isEmail();
     req.assert('password','Password must be 4 characters long').len(4);
-    req.assert('confirmPassword','Password do not match').equals(req.body.password);
-    req.sanitize('email').normalizeEmail({ remove_dots: false });
+    req.assert('confirmPassword','Passwords do not match').equals(req.body.password);
 
     const errors = req.validationErrors();
     if(errors){
         req.flash('errors',errors);
         return res.redirect('/signup');
     }
+
     const user = new User({
-        email:req.body.email,
+        email: req.body.email,
         password: req.body.password
     });
 
+    /* If email exists */
     User.findOne({email:req.body.email},(err,existingUser)=>{
         if(err){return next(err);}
         if(existingUser){
@@ -110,23 +111,13 @@ exports.postSignup = (req,res,next)=>{
     });
 };
 
-
 /**
- * GET /profile
- * Profile Page
+ * GET /account
+ * Profile page
  */
 
 exports.getAccount = (req,res)=>{
     res.render('account/profile',{
         title: 'Account Management'
-    }); 
+    });
 };
-
-/**
- * POST account/profile
- * Update profile info
- */
-
-
-
-
