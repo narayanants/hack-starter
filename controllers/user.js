@@ -6,6 +6,19 @@ const nodemailer = require('nodemailer');
 const passport = require('passport');
 const User = require('../models/User');
 
+/**Routes Overview
+ * /login (GET) => Login Page
+ * /login (POST) => Sign in using email and password
+ * /logout (GET) => Logout
+ * /signup (GET) => Sign up
+ * /signup (POST) => Create new local account
+ * /account (GET) => Profile page
+ * /account/profile (POST) => Update profile information
+ * /account/password (POST) => Update current password
+ * /account/delete (POST) => Delete user account
+ * /account/unlink/:provider (POST) => Unlink OAuth Provider
+ */
+
 /**
  * GET /login
  * Login page.
@@ -214,6 +227,28 @@ exports.getOauthUnlink = (req,res,next)=>{
         });
     });
 };
+
+/**
+ * GET /reset/:token
+ * Reset Password page.
+ */
+
+exports.getReset = (req,res,next)=>{
+    if(req.isAuthenticated){
+        return res.redirect('/');
+    }
+
+    User.findOne({passwordResetToken:req.params.token}).where('passwordResetExpires').gt(Date.now()).exec((err,user)=>{
+        if(err){return next(err);}
+        if(!user){
+            req.flash('errors', { msg: 'Password reset token is invalid or has expired.' });
+            return res.redirect('/forgot');
+        }
+        res.render('account/reset',{
+            title: 'Password Reset'
+        });
+    });
+};  
 
 
 
