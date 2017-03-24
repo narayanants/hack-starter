@@ -1,30 +1,35 @@
+'use strict';
+
 const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.model({
-    email: {type:String, unique: true},
+const userSchema = new mongoose.Schema({
+    email: {type:String,unqiue:true},
     password: String,
     passwordResetToken: String,
-    passwordResetExpires: String,
+    passwordResetExpires: Date,
 
     facebook: String,
     google: String,
     github: String,
-    linkedin: String,
     instagram: String,
-    twitter: String,
+    linkedin: String,
+    steam: String,
+    tokens: Array,
 
-    profile:{
-        name:String,
+    profile: {
+        name: String,
         gender: String,
-        profile: String,
-        picture: String,
-        website: String
+        location: String,
+        website: String,
+        picture: String
     }
 },{timestamps:true});
 
-/* Password hashing middleware */
+/**
+ * Password hashing middlewares
+ */
 
 userSchema.pre('save',function save(next){
     const user = this;
@@ -37,10 +42,10 @@ userSchema.pre('save',function save(next){
             next();
         });
     });
-}); 
+});
 
 /**
- * Helper method for validating user's password
+ * Compare user's password
  */
 
 userSchema.methods.comparePassword = function comparePassword(candidatePassword,cb){
@@ -49,8 +54,9 @@ userSchema.methods.comparePassword = function comparePassword(candidatePassword,
     });
 };
 
+
 /**
- * Helper method for getting user's gravatar.
+ * Helper methods for getting user's avatar
  */
 
 userSchema.methods.gravatar = function gravatar(size){
@@ -58,11 +64,10 @@ userSchema.methods.gravatar = function gravatar(size){
         size = 200;
     }
     if(!this.email){
-        return `https://gravatar.com/avatar/?s=${size}&r=retro`;
+        return `https://gravatar.com/avatar?s=${size}&d=retro`;
     }
-
     const md5 = crypto.createHash('md5').update(this.email).digest('hex');
-    return `https://gravatar.com/avatar/${md5}?s=${size}&r=retro`;
+    return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
 const User = mongoose.model('User',userSchema);
